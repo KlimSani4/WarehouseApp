@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Склад</title>
+<style>
+body { font-family: Arial; margin: 40px; }
+input { margin: 4px; }
+table { border-collapse: collapse; margin-top: 20px; }
+td, th { border: 1px solid #999; padding: 6px 10px; }
+</style>
+</head>
+<body>
+
+<h2>Материалы на складе</h2>
+<table id="tbl">
+<thead>
+<tr>
+<th>ID</th><th>Ордер</th><th>Дата</th><th>Материал</th><th>Поставщик</th><th>Кол-во</th><th>Цена</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+
+<h2>Добавить единицу хранения</h2>
+<div>
+    <input placeholder="Номер ордера" id="order_number">
+    <input placeholder="Дата" type="date" id="order_date"><br>
+    <input placeholder="ID поставщика" id="supplier_id">
+    <input placeholder="Счёт" id="account"><br>
+    <input placeholder="Код документа" id="document_code">
+    <input placeholder="Номер документа" id="document_number"><br>
+    <input placeholder="ID материала" id="material_id">
+    <input placeholder="Счёт материала" id="material_account"><br>
+    <input placeholder="ID ед. изм." id="unit_id">
+    <input placeholder="Количество" id="quantity">
+    <input placeholder="Цена" id="price"><br>
+    <button onclick="add()">Добавить</button>
+</div>
+
+<script>
+async function load() {
+    let res = await fetch("/storage");
+    let data = await res.json();
+    let tbody = document.querySelector("#tbl tbody");
+    tbody.innerHTML = "";
+    data.forEach(r => {
+        let tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${r.storage_id}</td>
+          <td>${r.order_number}</td>
+          <td>${r.order_date}</td>
+          <td>${r.material}</td>
+          <td>${r.supplier}</td>
+          <td>${r.quantity} ${r.unit_name}</td>
+          <td>${r.price}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+async function add() {
+    const fields = ["order_number","order_date","supplier_id","account","document_code",
+        "document_number","material_id","material_account","unit_id","quantity","price"];
+    let obj = {};
+    fields.forEach(f => obj[f] = document.getElementById(f).value);
+    await fetch("/storage", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(obj)
+    });
+    load();
+}
+
+load();
+</script>
+
+</body>
+</html>
