@@ -1,7 +1,9 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
+from flask_cors import CORS
 import sqlite3
 
 app = Flask(__name__)
+CORS(app)
 
 DB = "warehouse.db"
 
@@ -14,6 +16,10 @@ def query(sql, params=(), fetch=True):
     conn.commit()
     conn.close()
     return data
+
+@app.get("/")
+def index():
+    return render_template("index.html")
 
 @app.get("/storage")
 def get_storage():
@@ -42,6 +48,6 @@ def add_storage():
         data["material_account"], data["unit_id"], data["quantity"], data["price"]
     ), fetch=False)
     return jsonify({"status": "ok"})
-    
+
 if __name__ == "__main__":
     app.run(debug=True)
