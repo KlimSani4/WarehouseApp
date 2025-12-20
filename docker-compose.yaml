@@ -1,0 +1,15 @@
+version: "3.9"
+
+services:
+  warehouse:
+    build: .
+    container_name: warehouse_app
+    working_dir: /app
+    command: ["python3.11", "server.py"]
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+    # Если нужно обновлять код без пересборки — расскомментируй строку ниже
+    # volumes:
+    #   - ./:/app
+
