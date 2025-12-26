@@ -1,0 +1,14 @@
+FROM python:3.11-slim
+
+# Устанавливаем утилиты для Python-пакетов
+RUN apt-get update && apt-get install -y wget unzip default-jre-headless \
+    && rm -rf /var/lib/apt/lists/*
+
+# Обновляем pip и ставим анализаторы кода
+RUN python3.11 -m pip install --upgrade pip --no-cache-dir \
+    && pip install --no-cache-dir semgrep ggshield
+
+WORKDIR /app
+
+CMD ["bash"]
+
