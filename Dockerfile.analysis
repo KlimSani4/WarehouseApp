@@ -1,14 +1,24 @@
 FROM python:3.11-slim
 
-# Устанавливаем утилиты для Python-пакетов
-RUN apt-get update && apt-get install -y wget unzip default-jre-headless \
+# Системные зависимости
+RUN apt-get update && apt-get install -y \
+        git \
+        curl \
+        unzip \
+        build-essential \
+        libffi-dev \
+        libssl-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Обновляем pip и ставим анализаторы кода
-RUN python3.11 -m pip install --upgrade pip --no-cache-dir \
-    && pip install --no-cache-dir semgrep ggshield
+# Установка pip и инструментов анализа
+RUN python3.11 -m pip install --upgrade pip \
+    && python3.11 -m pip install --no-cache-dir semgrep ggshield
 
+# Обеспечим доступ к бинарникам pip
+ENV PATH="/root/.local/bin:${PATH}"
+
+# Рабочая директория
 WORKDIR /app
+COPY . /app
 
 CMD ["bash"]
-
